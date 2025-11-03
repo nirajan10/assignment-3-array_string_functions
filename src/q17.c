@@ -1,1 +1,1 @@
-// Write a C program that prompts the user for a positive integer and prints a countdown from that number to 1 using a for loop.
+// Write a function named calculatePower that takes two integers, base and exponent, as input and returns the result of raising the base to the exponent.

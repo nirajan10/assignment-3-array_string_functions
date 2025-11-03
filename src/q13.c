@@ -1,1 +1,1 @@
-// Write a C program that calculates the sum of all even numbers from 1 to 50 using a while loop.
+// Write a function named findFactorial that takes an integer as input and returns its factorial.

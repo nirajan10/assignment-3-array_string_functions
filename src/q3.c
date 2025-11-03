@@ -1,1 +1,1 @@
-// Write a C program that calculates the absolute value of a given number without using the built-in absolute value function.
+// Write a C program to sort an array of integers in ascending order using a sorting algorithm of your choice (e.g., bubble sort, selection sort, insertion sort).

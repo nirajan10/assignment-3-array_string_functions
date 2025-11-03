@@ -1,7 +1,1 @@
-/* Write a C program that prints a pattern of asterisks.
-    *****
-    ****
-    ***
-    **
-    *
-*/
+// Implement a C program to count the occurrence of a specific character in a string.

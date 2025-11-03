@@ -1,1 +1,1 @@
-// Write a C program that prints all even numbers between 1 and 100 using a for loop.
+// Implement a C program to find the second largest element in an array.

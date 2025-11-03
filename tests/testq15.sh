@@ -1,26 +1,39 @@
-#!/bin/bash
+#include <stdio.h>
 
-# Compile
-gcc src/q15.c -o q15
+/**
+ * @brief Counts the number of times a character appears in a string.
+ * 
+ * @param str The string to search in.
+ * @param ch The character to search for.
+ * @return The number of occurrences.
+ */
+int countOccurrences(char str[], char ch) {
+    int count = 0;
+    int i = 0;
+    while (str[i] != '\0') {
+        if (str[i] == ch) {
+            count++;
+        }
+        i++;
+    }
+    return count;
+}
 
-# Test data: input -> expected keyword
-declare -A tests=(
-  [1]="not prime"
-  [2]="prime"
-  [3]="prime"
-  [4]="not prime"
-  [7]="prime"
-  [12]="not prime"
-)
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        printf("Usage: %s \"<string>\" <char>\n", argv[0]);
+        return 1;
+    }
+    if (argv[2][1] != '\0') {
+        printf("Please provide a single character to count.\n");
+        return 1;
+    }
 
-for input in "${!tests[@]}"; do
-  expected="${tests[$input]}"
-  # Run program and convert output to lowercase
-  output=$(echo "$input" | ./q15 | tr '[:upper:]' '[:lower:]')
-  if echo "$output" | grep -q "$expected"; then
-    echo "✅ Q15 test with input $input passed"
-  else
-    echo "❌ Q15 test with input $input failed"
-    exit 1
-  fi
-done
+    char *inputString = argv[1];
+    char targetChar = argv[2][0];
+
+    int occurrences = countOccurrences(inputString, targetChar);
+    printf("The character '%c' appears %d times.\n", targetChar, occurrences);
+
+    return 0;
+}

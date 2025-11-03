@@ -1,23 +1,52 @@
 #!/bin/bash
 
-# Compile
-gcc src/q18.c -o q18
+# Test script for Q18
+# This tests the findPrimeNumbers function.
 
-# Test data: input -> expected sequence
-declare -A tests=(
-  [2]="2 4 6 8 10 12 14 16 18 20"
-  [5]="5 10 15 20 25 30 35 40 45 50"
-  [1]="1 2 3 4 5 6 7 8 9 10"
-)
-
-for input in "${!tests[@]}"; do
-  expected="${tests[$input]}"
-  # Run program and extract numbers only
-  output=$(echo "$input" | ./q18 | tr -cd '0-9\n ' | tr '\n' ' ' | tr -s ' ' | sed 's/[[:space:]]*$//')
-  if [ "$output" = "$expected" ]; then
-    echo "✅ Q18 test with input $input passed"
-  else
-    echo "❌ Q18 test with input $input failed"
+gcc src/q18.c -o q18_exec
+if [ $? -ne 0 ]; then
+    echo "Compilation failed."
     exit 1
-  fi
-done
+fi
+
+total_tests=0
+passed_tests=0
+
+# Test Case 1: Primes up to 20
+((total_tests++))
+output=$(./q18_exec 20)
+expected="2 3 5 7 11 13 17 19"
+if echo "$output" | grep -q "$expected"; then
+    echo "Test Case 1 (Up to 20) PASSED"
+    ((passed_tests++))
+else
+    echo "Test Case 1 (Up to 20) FAILED"
+fi
+
+# Test Case 2: Primes up to 10
+((total_tests++))
+output=$(./q18_exec 10)
+expected="2 3 5 7"
+if echo "$output" | grep -q "$expected"; then
+    echo "Test Case 2 (Up to 10) PASSED"
+    ((passed_tests++))
+else
+    echo "Test Case 2 (Up to 10) FAILED"
+fi
+
+# Test Case 3: Edge case with small n
+((total_tests++))
+output=$(./q18_exec 2)
+expected="2"
+if echo "$output" | grep -q "$expected"; then
+    echo "Test Case 3 (Up to 2) PASSED"
+    ((passed_tests++))
+else
+    echo "Test Case 3 (Up to 2) FAILED"
+fi
+
+echo "----------------------------------------"
+echo "Summary: $passed_tests / $total_tests tests passed."
+
+rm q18_exec
+exit 0

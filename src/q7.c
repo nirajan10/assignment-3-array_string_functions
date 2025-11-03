@@ -1,11 +1,1 @@
-/* Write a C program that prints a pattern of asterisks.
-    *
-    **
-    ***
-    ****
-    *****
-    ****
-    ***
-    **
-    *
-*/
+// Implement a C program to reverse a string.

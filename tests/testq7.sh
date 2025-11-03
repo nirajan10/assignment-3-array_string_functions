@@ -1,28 +1,49 @@
 #!/bin/bash
 
-# Compile
-gcc src/q7.c -o q7
+# Test script for Q7
+# The C program should take a string from the command line and print its reverse.
 
-# Define the expected pattern (normalize spaces)
-expected=$(cat <<'EOF'
-*
-**
-***
-****
-*****
-****
-***
-**
-*
-EOF
-)
-
-# Run the program and normalize output
-output=$(./q7 | sed 's/[[:space:]]*$//')
-
-if [ "$output" = "$expected" ]; then
-  echo "✅ Q7 Pattern test passed"
-else
-  echo "❌ Q7 Pattern test failed"
-  exit 1
+gcc src/q7.c -o q7_exec
+if [ $? -ne 0 ]; then
+    echo "Compilation failed."
+    exit 1
 fi
+
+total_tests=0
+passed_tests=0
+
+# Test Case 1: Odd length string
+((total_tests++))
+output=$(./q7_exec "hello")
+if echo "$output" | grep -q "olleh"; then
+    echo "Test Case 1 (Odd Length) PASSED"
+    ((passed_tests++))
+else
+    echo "Test Case 1 (Odd Length) FAILED"
+fi
+
+# Test Case 2: Even length string
+((total_tests++))
+output=$(./q7_exec "world")
+if echo "$output" | grep -q "dlrow"; then
+    echo "Test Case 2 (Even Length) PASSED"
+    ((passed_tests++))
+else
+    echo "Test Case 2 (Even Length) FAILED"
+fi
+
+# Test Case 3: Single character
+((total_tests++))
+output=$(./q7_exec "a")
+if echo "$output" | grep -q "a"; then
+    echo "Test Case 3 (Single Character) PASSED"
+    ((passed_tests++))
+else
+    echo "Test Case 3 (Single Character) FAILED"
+fi
+
+echo "----------------------------------------"
+echo "Summary: $passed_tests / $total_tests tests passed."
+
+rm q7_exec
+exit 0

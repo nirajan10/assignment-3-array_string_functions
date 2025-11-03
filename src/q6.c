@@ -1,1 +1,1 @@
-// Write a C program that prompts the user for a number and prints its multiplication table up to 10 using a do-while loop.
+// Write a C program to find the length of a string without using the built-in string functions.

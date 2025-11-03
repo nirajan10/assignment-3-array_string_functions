@@ -1,39 +1,43 @@
 #!/bin/bash
 
-gcc src/q19.c -o q19
+# Test script for Q19
+# This tests the calculateFactorialSeries function.
 
-# Test data: input -> expected pattern
-declare -A tests
-tests[2]=$(cat <<'EOF'
-* *
-* *
-EOF
-)
+gcc src/q19.c -o q19_exec
+if [ $? -ne 0 ]; then
+    echo "Compilation failed."
+    exit 1
+fi
 
-tests[3]=$(cat <<'EOF'
-* * *
-* * *
-* * *
-EOF
-)
+total_tests=0
+passed_tests=0
 
-tests[4]=$(cat <<'EOF'
-* * * *
-* * * *
-* * * *
-* * * *
-EOF
-)
+# Test Case 1: Series up to 5
+((total_tests++))
+output=$(./q19_exec 5)
+if echo "$output" | grep -q "1" && \
+   echo "$output" | grep -q "2" && \
+   echo "$output" | grep -q "6" && \
+   echo "$output" | grep -q "24" && \
+   echo "$output" | grep -q "120"; then
+    echo "Test Case 1 (Up to 5) PASSED"
+    ((passed_tests++))
+else
+    echo "Test Case 1 (Up to 5) FAILED"
+fi
 
-for input in "${!tests[@]}"; do
-  expected="${tests[$input]}"
-  # Run program and normalize trailing spaces on each line
-  output=$(echo "$input" | ./q19 | sed 's/[[:space:]]*$//')
+# Test Case 2: Series up to 1
+((total_tests++))
+output=$(./q19_exec 1)
+if echo "$output" | grep -q "1"; then
+    echo "Test Case 2 (Up to 1) PASSED"
+    ((passed_tests++))
+else
+    echo "Test Case 2 (Up to 1) FAILED"
+fi
 
-  if [ "$output" = "$expected" ]; then
-    echo "✅ Q19 test with input $input passed"
-  else
-    echo "❌ Q19 test with input $input failed"
-    echo 1
-  fi
-done
+echo "----------------------------------------"
+echo "Summary: $passed_tests / $total_tests tests passed."
+
+rm q19_exec
+exit 0

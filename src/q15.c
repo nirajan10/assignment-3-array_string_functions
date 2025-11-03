@@ -1,1 +1,1 @@
-// Write a C program that prompts the user for a positive integer and checks if it is a prime number using a while loop.
+// Write a function named countOccurrences that takes a string and a character as input and returns the number of times the character appears in the string.

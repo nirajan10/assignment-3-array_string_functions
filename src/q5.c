@@ -1,1 +1,1 @@
-// Write a C program that prompts the user for a positive integer and calculates the factorial of that number using a while loop.
+// Write a C program to merge two sorted arrays into a single sorted array.

@@ -1,7 +1,1 @@
-/* Write a C program that prints a pattern of asterisks.
-    *
-    **
-    ***
-    ****
-    *****
-*/
+// Write a C program to check if a given string is a palindrome.

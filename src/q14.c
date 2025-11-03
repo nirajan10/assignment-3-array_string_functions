@@ -1,1 +1,1 @@
-// Write a C program that prompts the user for a positive integer and prints all the factors of that number using a for loop.
+// Write a function named convertTemperature that takes a temperature value in Celsius and converts it to Fahrenheit. The function should return the converted temperature.

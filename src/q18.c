@@ -1,2 +1,1 @@
-// Write a C program that prompts the user for a positive integer and prints the
-// multiplication table for that number up to 10 using a while loop.
+// Write a function named findPrimeNumbers that takes an integer n as input and prints all prime numbers from 1 to n.

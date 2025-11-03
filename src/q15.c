@@ -1,0 +1,1 @@
+// Write a C program that prompts the user for a positive integer and checks if it is a prime number using a while loop.

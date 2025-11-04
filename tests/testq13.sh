@@ -2,7 +2,7 @@
 
 # Automatically detect question number from script name (testqX.sh)
 num=$(basename "$0" | grep -o -E '[0-9]+')
-SRC="../src/q${num}.c"
+SRC="./src/q${num}.c"
 
 # 1. Remove all comments (single-line // and block /* ... */)
 code_no_comments=$(sed -E '

@@ -1,39 +1,30 @@
-#include <stdio.h>
+#!/bin/bash
 
-/**
- * @brief Counts the number of times a character appears in a string.
- * 
- * @param str The string to search in.
- * @param ch The character to search for.
- * @return The number of occurrences.
- */
-int countOccurrences(char str[], char ch) {
-    int count = 0;
-    int i = 0;
-    while (str[i] != '\0') {
-        if (str[i] == ch) {
-            count++;
-        }
-        i++;
-    }
-    return count;
-}
+# Automatically detect question number from script name (testqX.sh)
+num=$(basename "$0" | grep -o -E '[0-9]+')
+SRC="../src/q${num}.c"
 
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Usage: %s \"<string>\" <char>\n", argv[0]);
-        return 1;
-    }
-    if (argv[2][1] != '\0') {
-        printf("Please provide a single character to count.\n");
-        return 1;
-    }
+# 1. Remove all comments (single-line // and block /* ... */)
+code_no_comments=$(sed -E '
+  s://.*$::g;               # remove // comments
+  :a; /\/*/{N; s:/\*.*\*/::; ba;}  # remove /* ... */ comments (multi-line)
+' "$SRC")
 
-    char *inputString = argv[1];
-    char targetChar = argv[2][0];
+# 2. Check if file (after removing comments) has any code left
+if ! echo "$code_no_comments" | grep -q '[^[:space:]]'; then
+    echo "❌ q${num}.c is empty or only contains comments"
+    exit 0
+fi
 
-    int occurrences = countOccurrences(inputString, targetChar);
-    printf("The character '%c' appears %d times.\n", targetChar, occurrences);
+# 3. Try to compile
+gcc "$SRC" -o "q${num}.out" 2> compile.log
+if [ $? -ne 0 ]; then
+    echo "❌ Compilation failed for q${num}.c"
+    cat compile.log
+else
+    echo "✅ Compilation successful for q${num}.c"
+fi
 
-    return 0;
-}
+# Cleanup
+rm -f "q${num}.out" compile.log
+exit 0

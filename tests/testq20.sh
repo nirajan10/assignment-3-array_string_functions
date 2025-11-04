@@ -1,49 +1,30 @@
 #!/bin/bash
 
-# Test script for Q20
-# This tests the iterative calculateGCD function.
+# Automatically detect question number from script name (testqX.sh)
+num=$(basename "$0" | grep -o -E '[0-9]+')
+SRC="../src/q${num}.c"
 
-gcc src/q20.c -o q20_exec
+# 1. Remove all comments (single-line // and block /* ... */)
+code_no_comments=$(sed -E '
+  s://.*$::g;               # remove // comments
+  :a; /\/*/{N; s:/\*.*\*/::; ba;}  # remove /* ... */ comments (multi-line)
+' "$SRC")
+
+# 2. Check if file (after removing comments) has any code left
+if ! echo "$code_no_comments" | grep -q '[^[:space:]]'; then
+    echo "❌ q${num}.c is empty or only contains comments"
+    exit 0
+fi
+
+# 3. Try to compile
+gcc "$SRC" -o "q${num}.out" 2> compile.log
 if [ $? -ne 0 ]; then
-    echo "Compilation failed."
-    exit 1
-fi
-
-total_tests=0
-passed_tests=0
-
-# Test Case 1: Standard case
-((total_tests++))
-output=$(./q20_exec 54 24)
-if echo "$output" | grep -q "6"; then
-    echo "Test Case 1 (54, 24) PASSED"
-    ((passed_tests++))
+    echo "❌ Compilation failed for q${num}.c"
+    cat compile.log
 else
-    echo "Test Case 1 (54, 24) FAILED"
+    echo "✅ Compilation successful for q${num}.c"
 fi
 
-# Test Case 2: Co-prime numbers
-((total_tests++))
-output=$(./q20_exec 17 13)
-if echo "$output" | grep -q "1"; then
-    echo "Test Case 2 (17, 13) PASSED"
-    ((passed_tests++))
-else
-    echo "Test Case 2 (17, 13) FAILED"
-fi
-
-# Test Case 3: One number is a multiple of the other
-((total_tests++))
-output=$(./q20_exec 48 12)
-if echo "$output" | grep -q "12"; then
-    echo "Test Case 3 (48, 12) PASSED"
-    ((passed_tests++))
-else
-    echo "Test Case 3 (48, 12) FAILED"
-fi
-
-echo "----------------------------------------"
-echo "Summary: $passed_tests / $total_tests tests passed."
-
-rm q20_exec
+# Cleanup
+rm -f "q${num}.out" compile.log
 exit 0

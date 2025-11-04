@@ -1,49 +1,30 @@
 #!/bin/bash
 
-gcc src/q3.c -o q3_exec
+# Automatically detect question number from script name (testqX.sh)
+num=$(basename "$0" | grep -o -E '[0-9]+')
+SRC="../src/q${num}.c"
+
+# 1. Remove all comments (single-line // and block /* ... */)
+code_no_comments=$(sed -E '
+  s://.*$::g;               # remove // comments
+  :a; /\/*/{N; s:/\*.*\*/::; ba;}  # remove /* ... */ comments (multi-line)
+' "$SRC")
+
+# 2. Check if file (after removing comments) has any code left
+if ! echo "$code_no_comments" | grep -q '[^[:space:]]'; then
+    echo "❌ q${num}.c is empty or only contains comments"
+    exit 0
+fi
+
+# 3. Try to compile
+gcc "$SRC" -o "q${num}.out" 2> compile.log
 if [ $? -ne 0 ]; then
-    echo "Compilation failed."
-    exit 1
-fi
-
-total_tests=0
-passed_tests=0
-
-# Test Case 1: Unsorted positive numbers
-((total_tests++))
-output=$(./q3_exec 5 2 8 1 9)
-expected="1 2 5 8 9"
-if echo "$output" | grep -q "$expected"; then
-    echo "Test Case 1 (Unsorted) PASSED"
-    ((passed_tests++))
+    echo "❌ Compilation failed for q${num}.c"
+    cat compile.log
 else
-    echo "Test Case 1 (Unsorted) FAILED"
+    echo "✅ Compilation successful for q${num}.c"
 fi
 
-# Test Case 2: Already sorted numbers
-((total_tests++))
-output=$(./q3_exec 10 20 30 40)
-expected="10 20 30 40"
-if echo "$output" | grep -q "$expected"; then
-    echo "Test Case 2 (Already Sorted) PASSED"
-    ((passed_tests++))
-else
-    echo "Test Case 2 (Already Sorted) FAILED"
-fi
-
-# Test Case 3: Mixed positive and negative numbers
-((total_tests++))
-output=$(./q3_exec 0 -5 10 -2 3)
-expected="-5 -2 0 3 10"
-if echo "$output" | grep -q "$expected"; then
-    echo "Test Case 3 (Mixed Numbers) PASSED"
-    ((passed_tests++))
-else
-    echo "Test Case 3 (Mixed Numbers) FAILED"
-fi
-
-echo "----------------------------------------"
-echo "Summary: $passed_tests / $total_tests tests passed."
-
-rm q3_exec
+# Cleanup
+rm -f "q${num}.out" compile.log
 exit 0

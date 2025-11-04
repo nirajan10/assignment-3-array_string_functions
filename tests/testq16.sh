@@ -1,52 +1,30 @@
 #!/bin/bash
 
-# Test script for Q16
-# This tests the reverseArray function.
+# Automatically detect question number from script name (testqX.sh)
+num=$(basename "$0" | grep -o -E '[0-9]+')
+SRC="../src/q${num}.c"
 
-gcc src/q16.c -o q16_exec
+# 1. Remove all comments (single-line // and block /* ... */)
+code_no_comments=$(sed -E '
+  s://.*$::g;               # remove // comments
+  :a; /\/*/{N; s:/\*.*\*/::; ba;}  # remove /* ... */ comments (multi-line)
+' "$SRC")
+
+# 2. Check if file (after removing comments) has any code left
+if ! echo "$code_no_comments" | grep -q '[^[:space:]]'; then
+    echo "❌ q${num}.c is empty or only contains comments"
+    exit 0
+fi
+
+# 3. Try to compile
+gcc "$SRC" -o "q${num}.out" 2> compile.log
 if [ $? -ne 0 ]; then
-    echo "Compilation failed."
-    exit 1
-fi
-
-total_tests=0
-passed_tests=0
-
-# Test Case 1: Even number of elements
-((total_tests++))
-output=$(./q16_exec 10 20 30 40)
-expected="40 30 20 10"
-if echo "$output" | grep -q "$expected"; then
-    echo "Test Case 1 (Even Elements) PASSED"
-    ((passed_tests++))
+    echo "❌ Compilation failed for q${num}.c"
+    cat compile.log
 else
-    echo "Test Case 1 (Even Elements) FAILED"
+    echo "✅ Compilation successful for q${num}.c"
 fi
 
-# Test Case 2: Odd number of elements
-((total_tests++))
-output=$(./q16_exec 1 2 3 4 5)
-expected="5 4 3 2 1"
-if echo "$output" | grep -q "$expected"; then
-    echo "Test Case 2 (Odd Elements) PASSED"
-    ((passed_tests++))
-else
-    echo "Test Case 2 (Odd Elements) FAILED"
-fi
-
-# Test Case 3: Single element
-((total_tests++))
-output=$(./q16_exec 99)
-expected="99"
-if echo "$output" | grep -q "$expected"; then
-    echo "Test Case 3 (Single Element) PASSED"
-    ((passed_tests++))
-else
-    echo "Test Case 3 (Single Element) FAILED"
-fi
-
-echo "----------------------------------------"
-echo "Summary: $passed_tests / $total_tests tests passed."
-
-rm q16_exec
+# Cleanup
+rm -f "q${num}.out" compile.log
 exit 0

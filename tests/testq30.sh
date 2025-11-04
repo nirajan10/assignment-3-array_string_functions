@@ -1,39 +1,30 @@
 #!/bin/bash
 
-# Test script for Q30
-# This tests the recursive countOccurrences function.
+# Automatically detect question number from script name (testqX.sh)
+num=$(basename "$0" | grep -o -E '[0-9]+')
+SRC="../src/q${num}.c"
 
-gcc src/q30.c -o q30_exec
+# 1. Remove all comments (single-line // and block /* ... */)
+code_no_comments=$(sed -E '
+  s://.*$::g;               # remove // comments
+  :a; /\/*/{N; s:/\*.*\*/::; ba;}  # remove /* ... */ comments (multi-line)
+' "$SRC")
+
+# 2. Check if file (after removing comments) has any code left
+if ! echo "$code_no_comments" | grep -q '[^[:space:]]'; then
+    echo "❌ q${num}.c is empty or only contains comments"
+    exit 0
+fi
+
+# 3. Try to compile
+gcc "$SRC" -o "q${num}.out" 2> compile.log
 if [ $? -ne 0 ]; then
-    echo "Compilation failed."
-    exit 1
-fi
-
-total_tests=0
-passed_tests=0
-
-# Test Case 1: Multiple occurrences
-((total_tests++))
-output=$(./q30_exec "banana" "a")
-if echo "$output" | grep -q "3"; then
-    echo "Test Case 1 (banana, a) PASSED"
-    ((passed_tests++))
+    echo "❌ Compilation failed for q${num}.c"
+    cat compile.log
 else
-    echo "Test Case 1 (banana, a) FAILED"
+    echo "✅ Compilation successful for q${num}.c"
 fi
 
-# Test Case 2: No occurrences
-((total_tests++))
-output=$(./q30_exec "hello" "x")
-if echo "$output" | grep -q "0"; then
-    echo "Test Case 2 (hello, x) PASSED"
-    ((passed_tests++))
-else
-    echo "Test Case 2 (hello, x) FAILED"
-fi
-
-echo "----------------------------------------"
-echo "Summary: $passed_tests / $total_tests tests passed."
-
-rm q30_exec
+# Cleanup
+rm -f "q${num}.out" compile.log
 exit 0

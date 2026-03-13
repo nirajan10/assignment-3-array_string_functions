@@ -77,4 +77,4 @@ functions.
 
 ---
 
-## Deadline: 23:59, Saturday, 15th Nov, 2025
+## Deadline: ---
